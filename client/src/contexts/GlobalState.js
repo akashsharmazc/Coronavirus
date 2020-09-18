@@ -26,6 +26,7 @@ export const GlobalProvider=({children})=>{
    }
    async function GetData(states){
    try {
+    await Axios.get('/api/v1/data')
     const res1=await Axios.get(`/api/v1/data/latest/${states}`)
      dispatch({
          type:"STATE_DATA",
