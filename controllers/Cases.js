@@ -4,6 +4,7 @@ const Axios=require("axios")
 const codetostate={}
 const statetocode={}
 var datesobject={}
+var moment=require('moment')
 exports.StateData=async(req,res,next)=>
 {
     try {
@@ -17,8 +18,9 @@ exports.StateData=async(req,res,next)=>
 exports.SaveData=async(req,res,next)=>
 {
     try {
+        var cutoff = new Date();
+cutoff.setDate(cutoff.getDate()-20);
         //console.log(Date.now())
-        await Case.collection.drop()
         const data1=await Axios("https://api.covid19india.org/data.json")
    const data1_1=Object.values(data1.data.statewise)
    data1_1.map((obj)=>{
@@ -35,6 +37,8 @@ exports.SaveData=async(req,res,next)=>
     {         
          for(var key in (data.data)[statesindata[i]].dates)
         {
+            if(moment(key)>moment(cutoff))
+            {
              const state1=statesindata1[i]
              const state2=statesindata[i]
              if(datesobject.hasOwnProperty(key)==false){
@@ -48,26 +52,34 @@ exports.SaveData=async(req,res,next)=>
                         datesobject[key][state1]=(data.data[state2]).dates[key]
                 }
          }
+        }
 
       
     }
     var schemacollection=[]
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
     for(var key in datesobject)
     {
         var new1={}
-    var newschema=new Case({
+    var newschema={
       Date:key,
+      createdAt:dateTime,
       Delta:datesobject[key]['Total'],
       States:Object.assign(new1,datesobject[key])
-    })
+    }
     
-    newschema.save(function(err,doc){
-    if(err)return console.err;
-    schemacollection.push(doc)
-    })
-    
+    if(moment(key)>moment(moment(cutoff)))
+    {
+        //var new1=await Case.findOne({"Date":key})
+        var new1=await Case.findOneAndUpdate({Date:key},newschema, {upsert: true}); 
+        schemacollection.push(new1)
+    }
+
 }
-res.send(schemacollection)
+res.send(schemacollection.reverse())
     } catch (error) {
         res.status(500).send(error)
     }
