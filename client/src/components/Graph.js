@@ -8,7 +8,13 @@ import Axios from 'axios'
 import Spinner from 'react-bootstrap/Spinner'
 export const Graph = () => {
     const {statedata,isbutton,GetData,stateentered,buttonclicked}=useContext(GlobalContext)
-    
+    useEffect(() => {
+        const fetchdata=async()=>
+        {
+            await Axios.get('/api/v1/data')
+        }
+        fetchdata()
+      }, []);
 function decider()
 {
     if(isbutton==true){
