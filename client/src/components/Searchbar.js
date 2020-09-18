@@ -1,14 +1,19 @@
-import React,{useContext,useState} from 'react';
+import React,{useContext} from 'react';
+import {Autosuggestwidget} from './Autosuggest'
 import {GlobalContext} from '../contexts/GlobalState'
-
+import ReactLoading from 'react-loading';
 export const Searchbar = () => {
-    const [text,settext]=useState('')
-  const {GetData}=useContext(GlobalContext)
-    return (
-             <div className="Search">
-      <input type="text" placeholder="Search for a State or City" value={text} onChange={(e)=>settext(e.target.value)}id="searchbar"/>
-      <button id="button1" onClick={()=>GetData(text)}>Submit</button>
-      </div>
-        
-    )
+    const {statedata,isbutton,GetData,stateentered,buttonclicked}=useContext(GlobalContext)
+
+    function decider1()
+    {
+        if(!stateentered)return(<div><ReactLoading type="spin" color="#c9c9c9" height="100%" width="100%" /></div>)
+        else{
+            return (
+                <Autosuggestwidget />
+              
+            )
+        }
+    }
+    return decider1()
 }

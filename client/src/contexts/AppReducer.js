@@ -4,7 +4,8 @@ export default (state,action) => {
         case 'STATE_DATA':
         return {
             ...state,
-            Transactions:Object.values(action.payload.dates)
+            Transactions:action.payload[0],
+            State:action.payload[1]
         }
         case 'ERROR':
             return{
@@ -12,6 +13,12 @@ export default (state,action) => {
                 ...state,
                 error:action.payload
             }
+            case 'BUTTON-CLICKED':
+                return{
+                    ...state,
+                    buttonclicked:true,
+                    State:action.payload
+                }
         default:
             return state
     }
