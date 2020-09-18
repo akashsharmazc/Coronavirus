@@ -74,8 +74,8 @@ cutoff.setDate(cutoff.getDate()-20);
     if(moment(key)>moment(moment(cutoff)))
     {
         //var new1=await Case.findOne({"Date":key})
-        var new1=await Case.findOneAndUpdate({Date:key},newschema, {upsert: true}); 
-        schemacollection.push(new1)
+        //var new1=await Case.findOneAndUpdate({Date:key},newschema, {upsert: true}); 
+        schemacollection.push(newschema)
     }
 
 }
